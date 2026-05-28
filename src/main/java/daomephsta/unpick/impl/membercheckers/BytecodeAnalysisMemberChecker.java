@@ -18,11 +18,10 @@ import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.FieldNode;
 import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.ParameterNode;
+import org.objectweb.asm.tree.TypeAnnotationNode;
 
 import daomephsta.unpick.api.classresolvers.IClassResolver;
 import daomephsta.unpick.api.classresolvers.IMemberChecker;
-
-import org.objectweb.asm.tree.TypeAnnotationNode;
 
 public class BytecodeAnalysisMemberChecker implements IMemberChecker {
 	@SuppressWarnings("unchecked")
@@ -160,32 +159,32 @@ public class BytecodeAnalysisMemberChecker implements IMemberChecker {
 	}
 
 	record ExtractedTypeAnnotations(
-			List<AnnotationNode>[] visibleMethodParams,
-			List<AnnotationNode>[] invisibleMethodParams,
-			List<AnnotationNode> visibleReturnType,
-			List<AnnotationNode> invisibleReturnType
+			List<TypeAnnotationNode>[] visibleMethodParams,
+			List<TypeAnnotationNode>[] invisibleMethodParams,
+			List<TypeAnnotationNode> visibleReturnType,
+			List<TypeAnnotationNode> invisibleReturnType
 	) {
-		public List<AnnotationNode> visibleMethodParams(final int index) {
+		public List<TypeAnnotationNode> visibleMethodParams(final int index) {
 			return index < visibleMethodParams.length ? visibleMethodParams[index] : null;
 		}
 
-		public List<AnnotationNode> invisibleMethodParams(final int index) {
+		public List<TypeAnnotationNode> invisibleMethodParams(final int index) {
 			return index < invisibleMethodParams.length ? invisibleMethodParams[index] : null;
 		}
 	}
 
 	private static ExtractedTypeAnnotations extractTypeAnnotations(final MethodNode method) {
 		final int parameterCount = Type.getArgumentCount(method.desc);
-		final List<AnnotationNode>[] visibleMethodParams = new List[parameterCount];
-		final List<AnnotationNode>[] invisibleMethodParams = new List[parameterCount];
+		final List<TypeAnnotationNode>[] visibleMethodParams = new List[parameterCount];
+		final List<TypeAnnotationNode>[] invisibleMethodParams = new List[parameterCount];
 		Arrays.setAll(visibleMethodParams, ignored -> new ArrayList<>(0));
 		Arrays.setAll(invisibleMethodParams, ignored -> new ArrayList<>(0));
 
 		final ExtractedTypeAnnotations result = new ExtractedTypeAnnotations(
-			visibleMethodParams,
-			invisibleMethodParams,
-			new ArrayList<>(0),
-			new ArrayList<>(0)
+				visibleMethodParams,
+				invisibleMethodParams,
+				new ArrayList<>(0),
+				new ArrayList<>(0)
 		);
 		extractTypeAnnotationsInto(method.visibleTypeAnnotations, result.visibleMethodParams, result.visibleReturnType);
 		extractTypeAnnotationsInto(method.invisibleTypeAnnotations, result.invisibleMethodParams, result.invisibleReturnType);
@@ -194,8 +193,8 @@ public class BytecodeAnalysisMemberChecker implements IMemberChecker {
 
 	private static void extractTypeAnnotationsInto(
 			final @Nullable List<TypeAnnotationNode> annotations,
-			final List<AnnotationNode>[] methodParam,
-			final List<AnnotationNode> returnType
+			final List<TypeAnnotationNode>[] methodParam,
+			final List<TypeAnnotationNode> returnType
 	) {
 		if (annotations == null) return;
 
