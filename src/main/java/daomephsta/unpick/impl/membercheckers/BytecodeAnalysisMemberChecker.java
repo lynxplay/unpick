@@ -27,7 +27,6 @@ import org.objectweb.asm.tree.TypeAnnotationNode;
 public class BytecodeAnalysisMemberChecker implements IMemberChecker {
 	@SuppressWarnings("unchecked")
 	private static final List<AnnotationNode>[] EMPTY_ANNOTATION_LIST_ARRAY = new List[0];
-	private static final List<TypeAnnotationNode>[] EMPTY_TYPE_ANNOTATION_LIST_ARRAY = new List[0];
 
 	private final IClassResolver classResolver;
 	private final ConcurrentMap<String, ClassInfo> classInfoCache = new ConcurrentHashMap<>();
@@ -126,10 +125,10 @@ public class BytecodeAnalysisMemberChecker implements IMemberChecker {
 	}
 
 	private static List<String> getAnnotations(
-			@Nullable List<? extends AnnotationNode> visibleAnnotations,
-			@Nullable List<? extends AnnotationNode> invisibleAnnotations,
-			@Nullable List<? extends AnnotationNode> visibleTypeAnnotations,
-			@Nullable List<? extends AnnotationNode> invisibleTypeAnnotations
+			@Nullable List<AnnotationNode> visibleAnnotations,
+			@Nullable List<AnnotationNode> invisibleAnnotations,
+			@Nullable List<TypeAnnotationNode> visibleTypeAnnotations,
+			@Nullable List<TypeAnnotationNode> invisibleTypeAnnotations
 	) {
 		List<String> annotations = new ArrayList<>();
 
@@ -146,14 +145,14 @@ public class BytecodeAnalysisMemberChecker implements IMemberChecker {
 		}
 
 		if (visibleTypeAnnotations != null) {
-			for (AnnotationNode annotation : visibleTypeAnnotations) {
-				annotations.add(Type.getType(annotation.desc).getClassName());
+			for (TypeAnnotationNode annotation : visibleTypeAnnotations) {
+				if (annotation.typePath == null || annotation.typePath.getLength() == 0) annotations.add(Type.getType(annotation.desc).getClassName());
 			}
 		}
 
 		if (invisibleTypeAnnotations != null) {
-			for (AnnotationNode annotation : invisibleTypeAnnotations) {
-				annotations.add(Type.getType(annotation.desc).getClassName());
+			for (TypeAnnotationNode annotation : invisibleTypeAnnotations) {
+				if (annotation.typePath == null || annotation.typePath.getLength() == 0) annotations.add(Type.getType(annotation.desc).getClassName());
 			}
 		}
 
