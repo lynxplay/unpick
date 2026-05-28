@@ -167,11 +167,11 @@ public class BytecodeAnalysisMemberChecker implements IMemberChecker {
 			List<AnnotationNode> invisibleReturnType
 	) {
 		public List<AnnotationNode> visibleMethodParams(final int index) {
-			return index > visibleMethodParams.length ? null : visibleMethodParams[index];
+			return index < visibleMethodParams.length ? visibleMethodParams[index] : null;
 		}
 
 		public List<AnnotationNode> invisibleMethodParams(final int index) {
-			return index > invisibleMethodParams.length ? null : invisibleMethodParams[index];
+			return index < invisibleMethodParams.length ? invisibleMethodParams[index] : null;
 		}
 	}
 
